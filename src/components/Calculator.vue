@@ -1,27 +1,26 @@
 <template>
   <div>
-    <h1>Calculator</h1>
     <div class="calculator" >
       <div class="display">{{ display !== '' ? display : '0' }}</div>
       <div v-on:click="clearDisplay" class="button">AC</div>
       <div v-on:click="negativeToggle" class="button">+/-</div>
       <div v-on:click="percentage" class="button">%</div>
-      <div v-on:click="chooseOperation" class="button orange">/</div>
+      <div v-on:click="divide" class="button orange">/</div>
       <div v-on:click="inputNumber" class="button">7</div>
       <div v-on:click="inputNumber" class="button">8</div>
       <div v-on:click="inputNumber" class="button">9</div>
-      <div class="button orange">X</div>
+      <div v-on:click="times" class="button orange">X</div>
       <div v-on:click="inputNumber" class="button">4</div>
       <div v-on:click="inputNumber" class="button">5</div>
       <div v-on:click="inputNumber" class="button">6</div>
-      <div class="button orange">-</div>
+      <div v-on:click="minus" class="button orange">-</div>
       <div v-on:click="inputNumber" class="button">1</div>
       <div v-on:click="inputNumber" class="button">2</div>
       <div v-on:click="inputNumber" class="button">3</div>
-      <div class="button orange">+</div>
+      <div v-on:click="plus" class="button orange">+</div>
       <div v-on:click="inputNumber" class="button zero">0</div>
-      <div class="button">.</div>
-      <div class="button orange">=</div>
+      <div v-on:click="dot" class="button">.</div>
+      <div v-on:click="result" class="button orange">=</div>
     </div>
   </div>
 </template>
@@ -35,13 +34,17 @@ export default {
   data(){
     return {
       display: '',
-      operation: ''
+      operation: null,
+      previous: null,
+      operatorClicked: false 
     }
   },
   methods: {
 
     inputNumber(event){
+      if(this.operatorClicked)this.display = ''
       if(this.display.length < 12)this.display += event.target.innerHTML
+      this.operatorClicked = false
     },
 
     clearDisplay(){ this.display = '' },
@@ -52,7 +55,40 @@ export default {
       this.display = `${parseFloat(this.display) / 100}`
     },
 
-    chooseOperation(){}
+    dot(){
+      if(this.display.indexOf('.') === -1){
+        this.display += '.'
+      }
+    },
+
+    setPrevious(){
+      this.previous = this.display
+      this.operatorClicked = true
+    },
+
+    divide(){
+      this.operation = (a, b) => a / b
+      this.setPrevious()
+    },
+    times(){
+      this.operation = (a, b) => a * b
+      this.setPrevious()
+    },
+    minus(){
+      this.operation = (a, b) => a - b
+      this.setPrevious()
+    },
+    plus(){
+      this.operation = (a, b) => a + b
+      this.setPrevious()
+    },
+
+    result(){
+      if(this.previous && this.display.length > 0){
+        this.display = this.operation(parseFloat(this.previous), parseFloat(this.display))
+        this.previous = null
+      }
+    }
 
   }
 }
@@ -81,7 +117,7 @@ h1{
 .display{
   grid-column-start: 1;
   grid-column-end: 5;
-  background: black;
+  background: rgba(0, 0, 0, 0.685);
   color: white;
   font-size: 3em;
   display: flex;
@@ -104,6 +140,7 @@ h1{
   color: #2F2F2F;
   font-size: 2em;
   padding: 16px;
+  cursor: pointer;
 }
 
 .orange{

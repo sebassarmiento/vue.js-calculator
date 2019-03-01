@@ -31,8 +31,9 @@ body{
   height: 100vh;
   width: 100vw;
   display: flex;
-  flex-direction: column;
-    align-items: center;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom right, rgb(16, 161, 106), rgb(20, 126, 197));
 }
 
 </style>
